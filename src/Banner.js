@@ -1,7 +1,26 @@
 import React from 'react';
-import './Banner.css'
+import './Banner.css';
+import axios from './axios';
+import requests from "./Requests";
+import {useState,useEffect} from 'react';
 
 export default function Banner() {
+    const [movie, setMovies] = useState([]);
+    const m = movie?.backdrop_path;
+    console.log("helooooo",m);
+
+    useEffect(()=>{
+        async function fetchData(){
+            const request = await axios.get(requests.fetchNetflixOriginals);
+            setMovies(
+                request.data.results[
+                    Math.floor(Math.random() * request.data.results.length-1)
+                ]
+            );
+           return request;
+        }
+        fetchData()
+    },[]);
     function truncate (string,n){
         return string?.length > n ? string.substr(0,n-1) +"..." : string;
     }
@@ -10,16 +29,16 @@ export default function Banner() {
       className ="banner"
       style ={{
           backgroundSize : "cover",
-          backgroundImage :`url("https://tipsmake.com/data/images/top-black-cover-photos-for-those-who-are-sad-picture-13-j3KHOP9sE.jpg")`,
+          backgroundImage: `url('https://image.tmdb.org/t/p/original/${movie?.backdrop_path}')`,
           backgroundPosition :"center center",
       }}
       >
         <div className="banner_contents">
-            <h1 className="banner_Title">Movie Name</h1>
+            <h1 className="banner_Title"> {movie?.title || movie?.name || movie?.original_name}</h1>
             <div className="banner_buttons">
                 <button className="banner_button">Play</button>
                 <button className="banner_button">My List</button>
-                <div className="banner_description">{truncate("Inspired by the adventures of Arsène Lupin, gentleman thief Assane Diop sets out to avenge his father for an injustice inflicted by a wealthy familyhttps://tipsmake.com/data/images/top-black-cover-photos-for-those-who-are-sad-picture-13-j3KHOP9sE.jpg.",150)}</div>
+                <div className="banner_description">   {truncate(movie?.overview, 150)}</div>
             </div>
         </div>
             
